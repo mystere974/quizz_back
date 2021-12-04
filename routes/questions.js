@@ -82,7 +82,7 @@ router.get('/', (req, res) => {
 //route pour modifier une question par ID//
 router.put('/:id', (req, res) => {
   const id = req.params.id
-  const questionsPropsToUpdate= req.body
+  const questionsPropsToUpdate = req.body
   mysql.query(
     'UPDATE questions SET ? WHERE questions.questions_id = ?',
     [questionsPropsToUpdate, id],
@@ -94,5 +94,32 @@ router.put('/:id', (req, res) => {
       }
     }
   )
+})
+
+//DELETE questions by ID//
+router.delete('/:id', (req, res) => {
+  const id = req.params.id
+  const sql = `DELETE FROM questions_has_responses WHERE questions_questions_id=?`
+  mysql.query(sql, id, (err, result) => {
+    if (err) {
+      res.status(500).send('1st error' + err)
+    } else {
+      const sql2 = `DELETE FROM level_has_questions WHERE questions_question_id=?`
+      mysql.query(sql2, id, (err, result2) => {
+        if (err) {
+          res.status(500).send('2nd error' + err)
+        } else {
+          const sql3 = `DELETE FROM questions WHERE questions.questions_id=?`
+          mysql.query(sql3, id, (err, result3) => {
+            if (err) {
+              res.status(500).send('last error' + err)
+            } else {
+              res.status(200).send('question deleted ^^')
+            }
+          })
+        }
+      })
+    }
+  })
 })
 module.exports = router
