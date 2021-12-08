@@ -27,6 +27,9 @@ app.use(express.urlencoded({ extended: true }))
 app.use(morgan('tiny'))
 
 app.use('/questions', routes.questions)
+app.use('/level', routes.level)
+app.use('/responses', routes.responses)
+app.use('/exactResponse', routes.exactReponse)
 
 app.listen(port, () => {
   console.log(`Server listening on port ${port}`)
